@@ -1,5 +1,6 @@
 "use server"
 
+import { connectToDatabase } from "@/database/connectDb"
 import User from "@/database/models/user.model"
 
 export async function createUser(user) {
