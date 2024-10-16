@@ -1,4 +1,4 @@
-import { Schema, model, models } from "mongoose";
+import mongoose, { Schema, model, models } from "mongoose";
 
 const UserSchema = new Schema({
   clerkId: { type: String, required: true, unique: true },
@@ -7,6 +7,10 @@ const UserSchema = new Schema({
   firstName: { type: String, required: true },
   lastName: {type: String, required: true },
   photo: { type: String, required: true },
+  posts:[{
+    type:mongoose.Schema.Types.ObjectId,
+    ref:"Post"
+  }]
 })
 
 const User = models.User || model('User', UserSchema);

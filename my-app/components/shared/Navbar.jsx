@@ -9,12 +9,13 @@ const Navbar = () => {
         <nav className="flex justify-between items-center">
           <Link href="/" className="text-2xl font-bold">PartyPal</Link>
           <div className=" flex items-center space-x-4">
+          <SignedIn>
             { navLinks.map((link)=>(
             <Link className='hover:text-white' key={link.label} href={link.pathname}>
             { link.label }
             </Link>
             )) }
-          <SignedIn>
+          
             <UserButton/>
           </SignedIn>
           </div>
