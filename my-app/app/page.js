@@ -5,15 +5,17 @@ import { currentUser } from '@clerk/nextjs/server'
 import { getUser } from '@/actions/user.actions'
 import { SignedIn, SignedOut } from '@clerk/nextjs'
 import Home from '@/components/shared/Home'
+import { getPosts } from '@/actions/post.actions'
 
 
 
-const page = async() => {
+const page = async({searchParams}) => {
   
   const clerkUser = await currentUser();
   const databaseUser = await getUser(clerkUser?.id)
-  console.log(databaseUser);
-
+  const { data, totalPages } = await getPosts({ limit:5, pageNumber: searchParams?.page || 1 })
+  
+  
   return (
     <section className=' p-6 min-h-screen bg-gradient-to-br from-purple-600 via-pink-500 to-red-500 text-white'>
      <SignedOut>
@@ -29,7 +31,7 @@ const page = async() => {
             </Button>
      </SignedOut>
      <SignedIn>
-      <Home databaseUser={databaseUser[0]}/>
+      <Home data={data} databaseUser={databaseUser[0]}/>
      </SignedIn>
 
     </section>

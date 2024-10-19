@@ -21,7 +21,8 @@ export async function createUser(user) {
       await connectToDatabase();
       const user = await User.find({clerkId:id}).populate({
         path:"posts",
-        model:Post
+        model:Post,
+        
       })
       return JSON.parse(JSON.stringify(user)) 
     } catch (error) {

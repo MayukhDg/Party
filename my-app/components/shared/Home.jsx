@@ -1,7 +1,7 @@
 "use client"
 
 
-import React from 'react'
+import React, { useState } from 'react'
 import { Textarea } from '@/components//ui/textarea'
 import { City }  from 'country-state-city';
 import { zodResolver } from "@hookform/resolvers/zod"
@@ -27,15 +27,17 @@ import {
 } from "@/components/ui/form"
 import CitySelector from './CitySelector';
 import { createPost } from '@/actions/post.actions';
+import Loader from './Loader';
+import LatestParties from './LatestParties';
 
 
 
 
 
-const Home = ({databaseUser}) => {
+const Home = ({databaseUser, data}) => {
   
-    const allCities = City.getCitiesOfCountry("IN")
-
+  const allCities = City.getCitiesOfCountry("IN")
+  const [submitting, setSubmitting] = useState(false);
     
   const formSchema = z.object({
   content: z.string().min(2).max(250),
@@ -55,6 +57,7 @@ const form = useForm({
 
       async function onSubmit(values) {
         
+        setSubmitting(true)
         let newPost;
 
         try {
@@ -70,11 +73,17 @@ const form = useForm({
         
         if(newPost){
           form.reset();
+          setSubmitting(false);
         }
       }
 
+     if(submitting){
+      return <Loader/>
+     }
+
     return (
    
+        <>
         <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
           <FormField
@@ -114,6 +123,13 @@ const form = useForm({
           <Button type="submit">Submit</Button>
     </form>
       </Form>
+      <div className='flex flex-col gap-2 mt-10' >
+        <h3 className='text-2xl font-bold tracking-wider' >Latest Parties</h3>
+        <LatestParties databaseUser={databaseUser} data={data}/>
+        </div> 
+      
+        
+        </>
    
   )
 }
