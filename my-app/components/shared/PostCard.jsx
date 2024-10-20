@@ -4,13 +4,14 @@
 import Image from 'next/image'
 import Link from 'next/link'
 import React from 'react'
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import { delPost } from '@/actions/post.actions';
 
 const PostCard = ({ post, databaseUser}) => {
  
 
-  const pathname = usePathname(); 
+  const pathname = usePathname();
+  const router = useRouter(); 
 
   const handleDelete = async()=>{
     const confirmDelete = confirm("Are you sure you want to delete the post?") 
@@ -54,7 +55,8 @@ const PostCard = ({ post, databaseUser}) => {
       <p>{post.content}</p>
       {  
       databaseUser?._id === post.user?._id &&
-       <>
+       
+       <div className='flex justify-between items-center w-full' >
        <button className='cursor-pointer' onClick={handleDelete}>
        <Image
           src="/trash.png"
@@ -63,8 +65,17 @@ const PostCard = ({ post, databaseUser}) => {
           alt="delete"
       />
        </button>
-      
-       </>
+
+       <button className='cursor-pointer' onClick={()=>router.push(`/post/edit/${post._id}`)}>
+       <Image
+          src="/edit.png"
+          width={40}
+          height={40}
+          alt="edit"
+      />
+       </button>
+       </div>
+
       } 
     </div>
   )

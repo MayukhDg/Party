@@ -1,19 +1,12 @@
 "use client"
 
-
-import React, { useState } from 'react'
+import { getPostById, updatePost } from '@/actions/post.actions'
+import React, { useEffect, useState } from 'react'
 import { Textarea } from '@/components//ui/textarea'
 import { City }  from 'country-state-city';
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
 import { z } from "zod"
-import {
-    Select,
-    SelectContent,
-    SelectItem,
-    SelectTrigger,
-    SelectValue,
-  } from "@/components/ui/select"
 
 import { Button } from "@/components/ui/button"
 import {
@@ -25,22 +18,25 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form"
-import CitySelector from './CitySelector';
-import { createPost } from '@/actions/post.actions';
-import Loader from './Loader';
-import LatestParties from './LatestParties';
+import Loader from '@/components/shared/Loader' 
 import { usePathname } from 'next/navigation';
 
 
-
-
-
-const Home = ({databaseUser, data}) => {
+const page = ({ params}) => {
   
-  const allCities = City.getCitiesOfCountry("IN")
+  const { id } = params 
+  const [postDetails, setPostDetails] = useState({});
+
+  useEffect(()=>{
+     const fetchPostDetails = ()=>{
+      getPostById(id).then(data=>setPostDetails(data));
+     }
+     fetchPostDetails();
+  },[id])
+  
   const [submitting, setSubmitting] = useState(false);
-  const pathname = usePathname();
-    
+  console.log(postDetails) 
+  
   const formSchema = z.object({
   content: z.string().min(2).max(250),
   image:z.string().optional(),
@@ -50,9 +46,9 @@ const Home = ({databaseUser, data}) => {
 const form = useForm({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      content: "",
-      image:"",
-      city:""
+      content: postDetails?.content,
+      image:postDetails?.image,
+      city: postDetails?.city
     },
   })
    
@@ -60,21 +56,19 @@ const form = useForm({
       async function onSubmit(values) {
         
         setSubmitting(true)
-        let newPost;
+        
 
         try {
-          newPost = await createPost({
-            user:databaseUser._id.toString(),
+          await updatePost({
+            postId:postDetails?._id,
             content: values.content,
-            city: values.city,
-            image: values.image,
-            path: pathname
+            city: values.city
           })
         } catch (error) {
           console.log(error)
         }
         
-        if(newPost){
+        finally{
           form.reset();
           setSubmitting(false);
         }
@@ -85,9 +79,8 @@ const form = useForm({
      }
 
     return (
-   
-        <>
-        <Form {...form}>
+    <div className=' p-6 min-h-screen bg-gradient-to-br from-purple-600 via-pink-500 to-red-500 text-white flex flex-col gap-3'>
+           <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
           <FormField
             control={form.control}
@@ -126,15 +119,8 @@ const form = useForm({
           <Button type="submit">Submit</Button>
     </form>
       </Form>
-      <div className='flex flex-col gap-2 mt-10' >
-        <h3 className='text-2xl font-bold tracking-wider' >Latest Parties</h3>
-        <LatestParties databaseUser={databaseUser} data={data}/>
-        </div> 
-      
-        
-        </>
-   
+    </div>
   )
 }
 
-export default Home
+export default page

@@ -5,7 +5,7 @@ import Post from "@/database/models/post.model";
 import User from "@/database/models/user.model";
 import { revalidatePath } from "next/cache";
 
-export async function createPost({user, content, city, image}){
+export async function createPost({user, content, city, image, path}){
    
   try {
     await connectToDatabase();
@@ -17,6 +17,7 @@ export async function createPost({user, content, city, image}){
         $push:{posts:newPost._id}
     })
     return JSON.parse(JSON.stringify(newPost));
+    revalidatePath(path)
   } catch (error) {
     console.log(error)
   }
@@ -75,13 +76,38 @@ export async function delPost({ postId, userId, path}) {
       await User.findByIdAndUpdate(userId, {
         $pull:{posts:deletedPost._id}
       })
-       
+      revalidatePath(path) 
       return JSON.parse(JSON.stringify(deletedPost))
-      revalidatePath(path)
+     
     } catch (error) {
       
     }
 }
 
 
+export async function getPostById(postId) {
+    try {
+      await connectToDatabase();
+      const post = await Post.findById(postId).populate({
+        path:"user",
+        model:User
+      })
+      return JSON.parse(JSON.stringify(post));
+    } catch (error) {
+      console.log(error)
+    } 
+}
 
+
+export async function updatePost({postId, content, city}) {
+    try {
+      await connectToDatabase();
+      const existingPost = await Post.findById(postId);
+      existingPost.content = content
+      existingPost.city = city 
+      await existingPost.save();
+      return JSON.parse(JSON.stringify("post updated successfully"))
+    } catch (error) {
+      console.log(error)
+    }
+}
