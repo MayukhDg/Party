@@ -30,6 +30,7 @@ import { createPost } from '@/actions/post.actions';
 import Loader from './Loader';
 import LatestParties from './LatestParties';
 import { usePathname } from 'next/navigation';
+import UploadImageButton from './UploadImageButton';
 
 
 
@@ -39,6 +40,7 @@ const Home = ({databaseUser, data}) => {
   
   const allCities = City.getCitiesOfCountry("IN")
   const [submitting, setSubmitting] = useState(false);
+  const [partyPhoto, setPartyPhoto] = useState("")
   const pathname = usePathname();
     
   const formSchema = z.object({
@@ -51,8 +53,7 @@ const form = useForm({
     resolver: zodResolver(formSchema),
     defaultValues: {
       content: "",
-      image:"",
-      city:""
+        city:""
     },
   })
    
@@ -67,7 +68,7 @@ const form = useForm({
             user:databaseUser._id.toString(),
             content: values.content,
             city: values.city,
-            image: values.image,
+            image: partyPhoto,
             path: pathname
           })
         } catch (error) {
@@ -122,8 +123,11 @@ const form = useForm({
               </FormItem>
             )}
           />
-         
-          <Button type="submit">Submit</Button>
+           <div className='flex items-center gap-5 w-full'>
+           <Button type="submit">Submit</Button>
+           <UploadImageButton setPartyPhoto={setPartyPhoto}/>
+            </div>          
+          
     </form>
       </Form>
       <div className='flex flex-col gap-2 mt-10' >

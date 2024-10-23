@@ -17,7 +17,7 @@ const page = async({searchParams}) => {
   
   
   return (
-    <section className=' p-6 min-h-screen bg-gradient-to-br from-purple-600 via-pink-500 to-red-500 text-white'>
+    <section className='overflow-hidden p-6 min-h-screen bg-gradient-to-br from-purple-600 via-pink-500 to-red-500 text-white'>
      <SignedOut>
      <h1 className="text-5xl font-bold mb-6">Where will you be tonight? <br/>
         Share it Here
