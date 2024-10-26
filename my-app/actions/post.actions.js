@@ -16,8 +16,9 @@ export async function createPost({user, content, city, image, path}){
     await User.findByIdAndUpdate(user, {
         $push:{posts:newPost._id}
     })
-    return JSON.parse(JSON.stringify(newPost));
     revalidatePath(path)
+    return JSON.parse(JSON.stringify(newPost));
+    
   } catch (error) {
     console.log(error)
   }
