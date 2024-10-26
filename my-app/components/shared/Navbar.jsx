@@ -1,9 +1,15 @@
+import { getUser } from '@/actions/user.actions'
 import { navLinks } from '@/constants'
 import { SignedIn, UserButton } from '@clerk/nextjs'
+import { currentUser } from '@clerk/nextjs/server'
 import Link from 'next/link'
 import React from 'react'
 
-const Navbar = () => {
+const Navbar = async() => {
+  
+  const clerkUser = await currentUser();
+  const databaseUser = await getUser(clerkUser.id)
+  
   return (
     <header className="container mx-auto px-4 py-6 bg-purple-600">
         <nav className="flex justify-between items-center">
@@ -15,7 +21,8 @@ const Navbar = () => {
             { link.label }
             </Link>
             )) }
-          
+            <Link href={`/profile/${databaseUser[0]._id}`} >My Profile</Link>
+             
             <UserButton/>
           </SignedIn>
           </div>

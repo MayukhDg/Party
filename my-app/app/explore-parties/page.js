@@ -12,6 +12,7 @@ const page = async ({ searchParams }) => {
   const clerkUser = await currentUser();
   const databaseUser = await getUser(clerkUser?.id)
   const { data, totalPages } = await getPosts({ limit:5, pageNumber: searchParams?.page || 1 })
+  
 
    
   return (
@@ -23,7 +24,7 @@ const page = async ({ searchParams }) => {
      ) : (
       <div className="flex gap-4 items-center flex-wrap">
         { data.map((post, i)=>(
-         <PostCard key={i} post={post} />
+         <PostCard databaseUser={databaseUser[0]} key={i} post={post} />
         )) }
       </div>
      ) }
