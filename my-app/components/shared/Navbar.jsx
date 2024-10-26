@@ -7,10 +7,13 @@ import React from 'react'
 
 const Navbar = async() => {
   
-  const clerkUser = await currentUser();
-  const databaseUser = await getUser(clerkUser.id)
   
-  return (
+const clerkUser = await currentUser();
+const databaseUser = await getUser(clerkUser?.id)
+  
+  
+
+return (
     <header className="container mx-auto px-4 py-6 bg-purple-600">
         <nav className="flex justify-between items-center">
           <Link href="/" className="text-2xl font-bold">PartyPal</Link>
@@ -21,7 +24,7 @@ const Navbar = async() => {
             { link.label }
             </Link>
             )) }
-            <Link href={`/profile/${databaseUser[0]._id}`} >My Profile</Link>
+            <Link href={`/profile/${databaseUser[0]?._id}`} >My Profile</Link>
              
             <UserButton/>
           </SignedIn>
